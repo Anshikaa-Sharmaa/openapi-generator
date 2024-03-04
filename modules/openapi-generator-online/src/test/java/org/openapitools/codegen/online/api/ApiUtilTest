@@ -1,0 +1,43 @@
+package org.openapitools.codegen.online.api;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.context.request.NativeWebRequest;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+public class ApiUtilTest {
+    @Test
+    public void testSetExampleResponse() throws IOException {
+        NativeWebRequest mockWebRequest = mock(NativeWebRequest.class);
+        MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+        when(mockWebRequest.getNativeResponse(HttpServletResponse.class)).thenReturn(mockResponse);
+
+        String type = "application/json";
+        String JSONExample = "{\"message\": \"Hello, world!\"}";
+
+        ApiUtil.setExampleResponse(mockWebRequest, type, JSONExample);
+
+        assertEquals(type, mockResponse.getHeader("Content-Type"));
+
+        assertEquals(JSONExample, mockResponse.getContentAsString());
+    }
+
+    @Test
+    public void testSetExampleResponseIOException() throws IOException {
+        NativeWebRequest mockWebRequest = mock(NativeWebRequest.class);
+        when(mockWebRequest.getNativeResponse(HttpServletResponse.class)).thenThrow(new UncheckedIOException(new java.io.IOException()));
+
+        String type = "application/json";
+        String JSONExample = "{\"message\": \"Hello, world!\"}";
+
+        assertThrows(RuntimeException.class, () -> ApiUtil.setExampleResponse(mockWebRequest, type, JSONExample));
+    }
+}
