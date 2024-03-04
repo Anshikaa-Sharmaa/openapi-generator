@@ -1,0 +1,35 @@
+package org.openapitools.codegen.online.api;
+
+import org.junit.jupiter.api.Test;
+import org.openapitools.codegen.online.model.GeneratorInput;
+import org.openapitools.codegen.online.model.ResponseCode;
+import org.openapitools.codegen.online.service.GenApiService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
+
+import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class GenApiServiceTest {
+    @Test
+    public void testingGenerateServerForNULLFramework() {
+        //creating mock data to test
+        String existingFramework = null;
+        GeneratorInput genInput = new GeneratorInput();
+        GenApiService apiServices = new GenApiService();
+
+        // calling the method to test it and then asserting that it throws the expected exception.
+        ResponseStatusException responseException = assertThrows(ResponseStatusException.class, () -> {
+            apiServices.generateServerForLanguage(existingFramework, genInput);
+        });
+
+        // asserting the exception status code
+        assertEquals(HttpStatus.BAD_REQUEST, responseException.getStatus());
+
+    }
+
+
+
